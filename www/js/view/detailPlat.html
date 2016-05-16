@@ -1,0 +1,23 @@
+<ion-view>
+    <ion-content scroll="true">
+        <div class="list card">
+
+            <div class="item item-avatar">
+                <img ng-src="{{pathServer}}/{{plat.restaurant.images[0].webPath}}/{{plat.restaurant.images[0].imageName}}">
+                <h2>{{plat.nom}}</h2>
+                <p>{{plat.restaurant.nom}}-{{plat.restaurant.quartier.nom}}</p>
+            </div>
+
+            <div class="item item-body">
+                <img class="full-image" ng-src="{{pathServer}}/{{plat.image.webPath}}/{{plat.image.imageName}}">
+                <p>
+                    {{plat.description}}
+                </p>
+                <button href="#" class="button button-block button-balanced">Commander</button>
+            </div>
+
+        </div>
+    </ion-content>
+</ion-view>
+
+

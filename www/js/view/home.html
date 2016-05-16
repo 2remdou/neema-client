@@ -1,0 +1,26 @@
+<ion-view>
+    <ion-header-bar class="bar bar-subheader padding-2">
+        <div class="item item-input-inset no-border padding-2">
+            <label class="item-input-wrapper">
+                <input type="text" class="col col-90" align="center" ng-model="newmsg" placeholder="Qu'est ce que vous voulez manger">
+            </label>
+            <button class="button button-calm button-small"><i class="ionicons ion-search"></i></button>
+        </div>
+
+    </ion-header-bar>
+
+    <ion-content scroll="true" class="has-subheader">
+        <div class="list card" ng-repeat="plat in plats" ui-sref="detailPlat({idPlat:plat.id})">
+            <div class="item item-avatar">
+                <h2>{{plat.nom}}</h2>
+                <p>{{plat.restaurant.nom}}-{{plat.restaurant.quartier.nom}}</p>
+            </div>
+            <div class="item item-image">
+                <img ng-src="{{pathServer}}/{{plat.image.webPath}}/{{plat.image.imageName}}" alt="{{plat.image.imageName}}">
+            </div>
+            <a class="item item-icon-left assertive" href="#">
+                {{plat.prix}} GNF
+            </a>
+        </div>
+    </ion-content>
+</ion-view>
