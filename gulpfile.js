@@ -27,8 +27,15 @@ gulp.task('sass', function(done) {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
+  gulp.watch(
+      [
+        paths.sass,
+        'www/lib/service',
+        'www/js/**/*.js'
+      ],
+      ['sass']);
 });
+
 
 gulp.task('install', ['git-check'], function() {
   return bower.commands.install()

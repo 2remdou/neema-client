@@ -18,5 +18,11 @@ app.config(['$stateProvider',function($stateProvider) {
             templateUrl: 'js/view/detailPlat.html',
             controller:'DetailPlatController'
         })
+        .state('detailCommande', {
+            url: '/detailCommande/:idPlat',
+            cache: enabledCache,
+            templateUrl: 'js/view/detailCommande.html',
+            controller:'DetailCommandeController'
+        })
     ;
 }]);

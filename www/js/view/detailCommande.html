@@ -1,0 +1,30 @@
+<ion-view>
+    <ion-content scroll="true" class="padding has-header">
+        <div class="row">
+            <p> <i class="icon ion-android-restaurant"></i> Prix plat</p>
+            <p class="montant">{{plat.prix}}</p>
+        </div>
+        <div class="row" style="position: relative">
+            <p><i class="icon ion-android-bicycle"></i> Transport</p>
+            <p class="montant">{{transport}}</p>
+        </div>
+
+        <hr>
+        <div class="row item">
+            <p>Total</p>
+            <strong class="montant">{{total}}</strong>
+        </div>
+        <br>
+        <div class="list">
+            <label class="item item-input">
+                <input type="text" placeholder="Telephone">
+            </label>
+            <label class="item item-input">
+                <input type="text" placeholder="Code Secret">
+            </label>
+            <button href="#" class="button button-block button-balanced">Valider</button>
+        </div>
+    </ion-content>
+</ion-view>
+
+

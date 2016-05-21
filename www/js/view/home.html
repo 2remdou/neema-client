@@ -1,15 +1,5 @@
 <ion-view>
-    <ion-header-bar class="bar bar-subheader padding-2">
-        <div class="item item-input-inset no-border padding-2">
-            <label class="item-input-wrapper">
-                <input type="text" class="col col-90" align="center" ng-model="newmsg" placeholder="Qu'est ce que vous voulez manger">
-            </label>
-            <button class="button button-calm button-small"><i class="ionicons ion-search"></i></button>
-        </div>
-
-    </ion-header-bar>
-
-    <ion-content scroll="true" class="has-subheader">
+    <ion-content scroll="true">
         <div class="list card" ng-repeat="plat in plats" ui-sref="detailPlat({idPlat:plat.id})">
             <div class="item item-avatar">
                 <h2>{{plat.nom}}</h2>

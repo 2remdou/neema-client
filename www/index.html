@@ -34,12 +34,18 @@
 
   </head>
   <body ng-app="neema">
+      <div class="bar bar-header item-input-inset">
+          <a class="button button-icon icon-left ion-home" ui-sref="home"></a>
+          <label class="item-input-wrapper">
+              <i class="icon ion-ios-search placeholder-icon"></i>
+              <input type="search" placeholder="Qu'est ce que vous voulez manger">
+          </label>
+          <button class="button button-clear">
+              Annuler
+          </button>
+      </div>
 
-      <ion-nav-bar class="bar-stable">
-          <ion-nav-title ui-sref="home">Neema</ion-nav-title>
-      </ion-nav-bar>
       <ion-nav-view>
       </ion-nav-view>
-
   </body>
 </html>

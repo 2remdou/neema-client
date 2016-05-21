@@ -20,3 +20,8 @@
 .padding-2 {
     padding: 2px !important;
 }
+
+.montant{
+    position: absolute;
+    right: 0px;
+}
