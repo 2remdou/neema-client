@@ -29,11 +29,12 @@ gulp.task('sass', function(done) {
 gulp.task('watch', function() {
   gulp.watch(
       [
-        paths.sass,
+        //paths.sass,
         'www/lib/service',
         'www/js/**/*.js'
       ],
-      ['sass']);
+      ['app']);
+      //['sass']);
 });
 
 
@@ -46,6 +47,9 @@ gulp.task('install', ['git-check'], function() {
 
 gulp.task('app',function () {
     return gulp.src([
+        'www/lib/ngCordova/dist/ng-cordova.min.js',
+        'www/lib/lodash/dist/lodash.min.js',
+        'www/lib/restangular/dist/restangular.min.js',
         'www/lib/service',
         'www/js/**/*.js'
     ])

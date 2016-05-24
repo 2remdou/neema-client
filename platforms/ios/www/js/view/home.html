@@ -1,0 +1,16 @@
+<ion-view>
+    <ion-content scroll="true">
+        <div class="list card" ng-repeat="plat in plats" ui-sref="detailPlat({idPlat:plat.id})">
+            <div class="item item-avatar">
+                <h2>{{plat.nom}}</h2>
+                <p>{{plat.restaurant.nom}}-{{plat.restaurant.quartier.nom}}</p>
+            </div>
+            <div class="item item-image">
+                <img ng-src="{{pathServer}}/{{plat.image.webPath}}/{{plat.image.imageName}}" alt="{{plat.image.imageName}}">
+            </div>
+            <a class="item item-icon-left assertive" href="#">
+                {{plat.prix}} GNF
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

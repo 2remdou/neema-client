@@ -6,7 +6,8 @@
 var app = angular.module('neema',
     [
         'ionic',
-        'restangular'
+        'restangular',
+        'ngCordova'
     ])
         .constant('PATHSERVER','http://localhost:8000')
         .constant('UrlApi','http://localhost:8000/api')
@@ -35,3 +36,5 @@ var app = angular.module('neema',
             $rootScope.pathServer = PATHSERVER;
         }])
     ;
+
+

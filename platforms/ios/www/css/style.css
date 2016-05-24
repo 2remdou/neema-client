@@ -1,1 +1,31 @@
 /* Empty. Add your own CSS if you like */
+.bar-subheader
+{
+    height: 20px !important;
+    border: none;
+
+}
+
+.has-subheader {
+    top: 90px !important;
+}
+
+.no-border{
+    border: none !important;
+}
+
+.padding-5 {
+    padding: 5px !important;
+}
+.padding-2 {
+    padding: 2px !important;
+}
+
+.montant{
+    position: absolute;
+    right: 0px;
+}
+
+.has-error {
+    color: #a94442;
+}
