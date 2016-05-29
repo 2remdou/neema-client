@@ -11,7 +11,7 @@ var app = angular.module('neema',
     ])
         .constant('PATHSERVER','http://localhost:8000')
         .constant('UrlApi','http://localhost:8000/api')
-    .run(['$ionicPlatform','$location',function($ionicPlatform,$location) {
+    .run(['$ionicPlatform','$state',function($ionicPlatform,$state) {
         $ionicPlatform.ready(function() {
             if(window.cordova && window.cordova.plugins.Keyboard) {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -27,7 +27,7 @@ var app = angular.module('neema',
                 StatusBar.styleDefault();
             }
 
-            //$location.path('/');
+            $state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
         });
 
 

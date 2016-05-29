@@ -3,8 +3,8 @@
  */
 'use strict';
 app.controller('CommandeController',
-    ['$scope','PlatService','$stateParams','$state','GeoLocalisationService','$ionicLoading',
-        function($scope,PlatService,$stateParams,$state,GeoLocalisationService,$ionicLoading){
+    ['$scope','PlatService','$stateParams','$state','GeoLocalisationService','$ionicLoading','CommandeService',
+        function($scope,PlatService,$stateParams,$state,GeoLocalisationService,$ionicLoading,CommandeService){
 
             $scope.commande={};
 
@@ -28,6 +28,14 @@ app.controller('CommandeController',
             });
 
             $scope.valider = function(commande){
+                var detailCommande = {
+                    quantite:1,
+                    prix:$scope.plat.prix,
+                    plat:$scope.plat.id
+                };
+                commande.detailCommandes = [detailCommande];
+                commande.fraisTransport = $scope.transport;
+                CommandeService.post(commande);
 
             };
 
@@ -41,7 +49,6 @@ app.controller('CommandeController',
             //***************LISTENER*******************
 
             $scope.$on('geolocalisation.success',function(event,args){
-                log(args);
                 $scope.nbreLoader--;
                 $scope.errorGeoLocalisation = false;
                 $scope.commande.latitude = args.position.coords.latitude;
@@ -53,4 +60,9 @@ app.controller('CommandeController',
                 $ionicLoading.hide();
             });
 
-}]);
+            $scope.$on('commande.created',function(event,args){
+                log(args);
+            });
+
+
+        }]);

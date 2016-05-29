@@ -18,6 +18,12 @@ app.config(['$stateProvider',function($stateProvider) {
             templateUrl: 'js/view/detailPlat.html',
             controller:'DetailPlatController'
         })
+        .state('restaurant', {
+            url: '/restaurant/:idRestaurant',
+            cache: enabledCache,
+            templateUrl: 'js/view/restaurant.html',
+            controller:'RestaurantController'
+        })
         .state('commande', {
             url: '/commande/:idPlat',
             cache: enabledCache,

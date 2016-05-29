@@ -22,6 +22,7 @@
                         <input type="text" placeholder="Tapez votre numero telephone" name="telephone" ng-model="commande.telephone" required>
                     </label>
                     <p ng-show="form.telephone.$invalid && !form.telephone.$pristine" class="help-block">Le numero telephone est obligatoire.</p>
+                    <p ng-show="errorGeoLocalisation" class="has-error">{{messageErrorLocalisation}}</p>
                 </div>
                 <!--
                             <label class="item item-input">

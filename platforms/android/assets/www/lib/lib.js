@@ -147,11 +147,12 @@ Ft._=Kt):Vt._=Kt}).call(this);
 var app = angular.module('neema',
     [
         'ionic',
-        'restangular'
+        'restangular',
+        'ngCordova'
     ])
         .constant('PATHSERVER','http://localhost:8000')
         .constant('UrlApi','http://localhost:8000/api')
-    .run(['$ionicPlatform','$location',function($ionicPlatform,$location) {
+    .run(['$ionicPlatform','$state',function($ionicPlatform,$state) {
         $ionicPlatform.ready(function() {
             if(window.cordova && window.cordova.plugins.Keyboard) {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -167,7 +168,7 @@ var app = angular.module('neema',
                 StatusBar.styleDefault();
             }
 
-            //$location.path('/');
+            $state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
         });
 
 
@@ -176,6 +177,8 @@ var app = angular.module('neema',
             $rootScope.pathServer = PATHSERVER;
         }])
     ;
+
+
 
 /**
  * Created by touremamadou on 06/05/2016.
@@ -224,14 +227,24 @@ var log = function(log){
 /**
  * Created by touremamadou on 16/05/2016.
  */
-
+'use strict';
 app.controller('CommandeController',
-    ['$scope','PlatService','$stateParams','$state',
-        function($scope,PlatService,$stateParams,$state){
+    ['$scope','PlatService','$stateParams','$state','GeoLocalisationService','$ionicLoading',
+        function($scope,PlatService,$stateParams,$state,GeoLocalisationService,$ionicLoading){
 
-            if(!$stateParams.idPlat) $state.go('home');
+            $scope.commande={};
 
+            //if(!$stateParams.idPlat) $state.go('home');
+
+            //$scope.nbreLoader = 2;
+            //$ionicLoading.show({
+            //    templateUrl: 'js/view/spinner.html'
+            //});
+
+            GeoLocalisationService.getPosition();
+/*
             PlatService.get($stateParams.idPlat).then(function(response){
+                $scope.nbreLoader--;
                 $scope.plat = response;
                 $scope.transport = Math.floor(Math.random() * 15000 + 10000) ;
 
@@ -243,11 +256,31 @@ app.controller('CommandeController',
 
             $scope.valider = function(commande){
 
-
             };
+
+            $scope.$watch('nbreLoader', function(newValue, oldValue, scope) {
+                if($scope.nbreLoader<=0) $ionicLoading.hide();
+                ;
+            });
+*/
+
 
 
             //***************LISTENER*******************
+
+            $scope.$on('geolocalisation.success',function(event,args){
+                $scope.errorGeoLocalisation = true;
+                $scope.messageErrorLocalisation = args.position.coords.latitude+','+args.position.coords.longitude;
+                $scope.nbreLoader--;
+                //$scope.errorGeoLocalisation = false;
+                $scope.commande.latitude = args.position.coords.latitude;
+                $scope.commande.longitude = args.position.coords.longitude;
+            });
+            $scope.$on('geolocalisation.error',function(event,args){
+                $scope.errorGeoLocalisation = true;
+                $scope.messageErrorLocalisation = args.message;
+                $ionicLoading.hide();
+            });
 
 }]);
 /**
@@ -286,3 +319,34 @@ app.controller('HomeController',['$scope','PlatService',function($scope,PlatServ
         $scope.plats = args.plats;
     });
 }]);
+/**
+ * Created by touremamadou on 23/05/2016.
+ */
+'use strict';
+
+app.service('GeoLocalisationService',[
+    '$cordovaGeolocation','$rootScope',
+    function($cordovaGeolocation,$rootScope){
+
+        this.getPosition = function(){
+            var posOptions = {timeout: 10000, enableHighAccuracy: false};
+            $cordovaGeolocation
+                .getCurrentPosition(posOptions)
+                .then(function (position) {
+                    $rootScope.$broadcast('geolocalisation.success',{position:position});
+                }, function(err) {
+                    var message='';
+                    if(err.code === 1){//PositionError.PERMISSION_DENIED
+                        message='Veuillez nous autoriser à vous la geolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
+                    }else if(err.code === 2){ //PositionError.POSITION_UNAVAILABLE
+                        message='Veuillez vous connectez à internet, pour nous permettre d\'obtenir votre adresse de livraison';
+                    }else if(err.code === 3){ //PositionError.TIMEOUT
+                        message='Impossible de vous géolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
+                    }
+                    $rootScope.$broadcast('geolocalisation.error',{message:message});
+                    log(err);
+                });
+
+        };
+    }
+]);
