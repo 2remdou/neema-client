@@ -1,10 +1,10 @@
 /* Empty. Add your own CSS if you like */
-.bar-subheader
+/*.bar-subheader
 {
     height: 20px !important;
     border: none;
 
-}
+}*/
 
 .has-subheader {
     top: 90px !important;
@@ -20,6 +20,9 @@
 .padding-2 {
     padding: 2px !important;
 }
+.margin-5{
+    margin: 5px !important;
+}
 
 .montant{
     position: absolute;
@@ -30,7 +33,12 @@
     color: #a94442;
 }
 
-div.spinner {
+.cursor-pointer{
+    cursor: pointer;
+}
+.spinner svg {
+    width: 19% !important;
+    height: 40px !important;
     margin: auto;
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
@@ -38,8 +46,12 @@ div.spinner {
     text-align: center;
     z-index: 100;
 }
-.spinner svg {
-    width: 19% !important;
-    height: 40px !important;
 
+.scroll {
+    height: 100%;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
 }

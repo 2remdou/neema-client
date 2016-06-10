@@ -27,7 +27,8 @@ var app = angular.module('neema',
                 StatusBar.styleDefault();
             }
 
-            $state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
+            //$state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
+            $state.go('app.home');
         });
 
 

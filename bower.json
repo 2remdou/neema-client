@@ -7,6 +7,9 @@
   },
   "dependencies": {
     "restangular": "~1.5.2",
-    "ngCordova": "~0.1.26-alpha"
+    "ngCordova": "~0.1.26-alpha",
+    "angular-jwt": "^0.0.9",
+    "angular-messages": "^1.5.6",
+    "ionic-select-control": "^1.7.0"
   }
 }

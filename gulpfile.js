@@ -47,9 +47,13 @@ gulp.task('install', ['git-check'], function() {
 
 gulp.task('app',function () {
     return gulp.src([
+        'www/lib/ionic/js/ionic.bundle.min.js',
         'www/lib/ngCordova/dist/ng-cordova.min.js',
         'www/lib/lodash/dist/lodash.min.js',
+        'www/lib/angular-messages/angular-messages.min.js',
         'www/lib/restangular/dist/restangular.min.js',
+        'www/lib/angular-jwt/dist/angular-jwt.min.js',
+        'www/lib/ionic-select-control/dist/SelectBox.min.js',
         'www/lib/service',
         'www/js/**/*.js'
     ])
@@ -69,3 +73,6 @@ gulp.task('git-check', function(done) {
   }
   done();
 });
+
+
+//cp ../neema/web/bundles/service.js www/lib/

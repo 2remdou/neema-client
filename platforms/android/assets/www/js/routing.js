@@ -6,23 +6,61 @@
 app.config(['$stateProvider',function($stateProvider) {
     var enabledCache = false;
     $stateProvider
-        .state('home', {
+        .state('app', {
             url: '/',
             cache: enabledCache,
-            templateUrl: 'js/view/home.html',
-            controller:'HomeController'
+            abstract:true,
+            templateUrl: 'js/view/menu.html'
         })
-        .state('detailPlat', {
-            url: '/detailPlat/:idPlat',
+        .state('app.home', {
+            url: 'list',
             cache: enabledCache,
-            templateUrl: 'js/view/detailPlat.html',
-            controller:'DetailPlatController'
+            views:{
+                'menuContent':{
+                  templateUrl: 'js/view/home.html',
+                  controller:'HomeController'
+              }
+            }
         })
-        .state('commande', {
-            url: '/commande/:idPlat',
+        .state('app.plat', {
+            url: 'plat/:idPlat',
             cache: enabledCache,
-            templateUrl: 'js/view/commande.html',
-            controller:'CommandeController'
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/plat.html',
+                    controller:'PlatController'
+                }
+            }
+        })
+        .state('app.restaurant', {
+            url: 'restaurant/:idRestaurant',
+            cache: enabledCache,
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/restaurant.html',
+                    controller:'RestaurantController'
+                }
+            }
+        })
+        .state('app.commande', {
+            url: 'commande/:idPlat',
+            cache: enabledCache,
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/commande.html',
+                    controller:'CommandeController'
+                }
+            }
+        })
+        .state('app.suivi', {
+            url: 'suivi',
+            cache: enabledCache,
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/suivi.html',
+                    controller:'SuiviController'
+                }
+            }
         })
     ;
 }]);

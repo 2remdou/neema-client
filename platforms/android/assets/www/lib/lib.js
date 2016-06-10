@@ -168,7 +168,8 @@ var app = angular.module('neema',
                 StatusBar.styleDefault();
             }
 
-            $state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
+            //$state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
+            $state.go('app.home');
         });
 
 
@@ -197,23 +198,61 @@ app.config(['RestangularProvider','UrlApi',function(RestangularProvider,UrlApi){
 app.config(['$stateProvider',function($stateProvider) {
     var enabledCache = false;
     $stateProvider
-        .state('home', {
+        .state('app', {
             url: '/',
             cache: enabledCache,
-            templateUrl: 'js/view/home.html',
-            controller:'HomeController'
+            abstract:true,
+            templateUrl: 'js/view/menu.html'
         })
-        .state('detailPlat', {
-            url: '/detailPlat/:idPlat',
+        .state('app.home', {
+            url: 'list',
             cache: enabledCache,
-            templateUrl: 'js/view/detailPlat.html',
-            controller:'DetailPlatController'
+            views:{
+                'menuContent':{
+                  templateUrl: 'js/view/home.html',
+                  controller:'HomeController'
+              }
+            }
         })
-        .state('commande', {
-            url: '/commande/:idPlat',
+        .state('app.plat', {
+            url: 'plat/:idPlat',
             cache: enabledCache,
-            templateUrl: 'js/view/commande.html',
-            controller:'CommandeController'
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/plat.html',
+                    controller:'PlatController'
+                }
+            }
+        })
+        .state('app.restaurant', {
+            url: 'restaurant/:idRestaurant',
+            cache: enabledCache,
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/restaurant.html',
+                    controller:'RestaurantController'
+                }
+            }
+        })
+        .state('app.commande', {
+            url: 'commande/:idPlat',
+            cache: enabledCache,
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/commande.html',
+                    controller:'CommandeController'
+                }
+            }
+        })
+        .state('app.suivi', {
+            url: 'suivi',
+            cache: enabledCache,
+            views:{
+                'menuContent':{
+                    templateUrl: 'js/view/suivi.html',
+                    controller:'SuiviController'
+                }
+            }
         })
     ;
 }]);
@@ -229,20 +268,29 @@ var log = function(log){
  */
 'use strict';
 app.controller('CommandeController',
-    ['$scope','PlatService','$stateParams','$state','GeoLocalisationService','$ionicLoading',
-        function($scope,PlatService,$stateParams,$state,GeoLocalisationService,$ionicLoading){
+    ['$scope','PlatService','$stateParams','$state','GeoLocalisationService','$ionicLoading','CommandeService',
+        function($scope,PlatService,$stateParams,$state,GeoLocalisationService,$ionicLoading,CommandeService){
 
             $scope.commande={};
 
-            //if(!$stateParams.idPlat) $state.go('home');
+            if(!$stateParams.idPlat) $state.go('app.home');
 
-            //$scope.nbreLoader = 2;
-            //$ionicLoading.show({
-            //    templateUrl: 'js/view/spinner.html'
-            //});
+            $scope.nbreLoader = 2;
+            $ionicLoading.show({
+                templateUrl: 'js/view/spinner.html'
+            });
 
-            GeoLocalisationService.getPosition();
-/*
+            GeoLocalisationService.getPosition().then(function(position){
+                $scope.nbreLoader--;
+                $scope.errorGeoLocalisation = false;
+                $scope.commande.latitude = position.coords.latitude;
+                $scope.commande.longitude = position.coords.longitude;
+            },function(message){
+                $scope.nbreLoader--;
+                $scope.errorGeoLocalisation = true;
+                $scope.messageErrorLocalisation = message;
+            });
+
             PlatService.get($stateParams.idPlat).then(function(response){
                 $scope.nbreLoader--;
                 $scope.plat = response;
@@ -251,10 +299,18 @@ app.controller('CommandeController',
                 $scope.total = $scope.plat.prix+$scope.transport;
 
             },function(error){
-                $state.go('home')
+                $state.go('app.home')
             });
 
             $scope.valider = function(commande){
+                var detailCommande = {
+                    quantite:1,
+                    prix:$scope.plat.prix,
+                    plat:$scope.plat.id
+                };
+                commande.detailCommandes = [detailCommande];
+                commande.fraisTransport = $scope.transport;
+                CommandeService.post(commande);
 
             };
 
@@ -262,24 +318,51 @@ app.controller('CommandeController',
                 if($scope.nbreLoader<=0) $ionicLoading.hide();
                 ;
             });
-*/
 
 
 
             //***************LISTENER*******************
 
-            $scope.$on('geolocalisation.success',function(event,args){
-                $scope.errorGeoLocalisation = true;
-                $scope.messageErrorLocalisation = args.position.coords.latitude+','+args.position.coords.longitude;
-                $scope.nbreLoader--;
-                //$scope.errorGeoLocalisation = false;
-                $scope.commande.latitude = args.position.coords.latitude;
-                $scope.commande.longitude = args.position.coords.longitude;
+            $scope.$on('commande.created',function(event,args){
+                log(args);
             });
-            $scope.$on('geolocalisation.error',function(event,args){
-                $scope.errorGeoLocalisation = true;
-                $scope.messageErrorLocalisation = args.message;
-                $ionicLoading.hide();
+
+        }]);
+/**
+ * Created by touremamadou on 06/05/2016.
+ */
+
+app.controller('HomeController',['$scope','PlatService',function($scope,PlatService){
+
+    PlatService.list();
+
+
+    //***************LISTENER*******************
+    $scope.$on('plat.list',function(event,args){
+        $scope.plats = args.plats;
+    });
+
+}]);
+/**
+ * Created by touremamadou on 16/05/2016.
+ */
+
+'use strict';
+app.controller('PlatController',
+    ['$scope','PlatService','$stateParams','$state',
+        function($scope,PlatService,$stateParams,$state){
+
+            if(!$stateParams.idPlat) $state.go('app.home');
+
+            PlatService.get($stateParams.idPlat).then(function(response){
+                $scope.plat = response;
+            },function(error){
+                $state.go('app.home')
+            });
+
+            //***************LISTENER*******************
+            $scope.$on('plat.list',function(event,args){
+                $scope.plats = args.plats;
             });
 
 }]);
@@ -309,44 +392,144 @@ app.controller('DetailPlatController',
  * Created by touremamadou on 06/05/2016.
  */
 
-app.controller('HomeController',['$scope','PlatService',function($scope,PlatService){
+app.controller('SuiviController',
+    ['$scope','GeoLocalisationService','$ionicLoading','$ionicModal','$state',
+    function($scope,GeoLocalisationService,$ionicLoading,$ionicModal,$state){
 
-    PlatService.list();
+        $ionicLoading.show({
+            templateUrl: 'js/view/spinner.html'
+        });
+
+        $ionicModal.fromTemplateUrl('js/view/modalMessage.html',{
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal){
+            $scope.modal = modal;
+        });
 
 
-    //***************LISTENER*******************
-    $scope.$on('plat.list',function(event,args){
-        $scope.plats = args.plats;
-    });
-}]);
+        GeoLocalisationService.getMap().then(function(map){
+            $scope.map = map;
+            $ionicLoading.hide();
+        },function(message){
+            $ionicLoading.hide();
+            $scope.titreModal = 'Echec géolocalisation';
+            $scope.messageModal = message;
+            $scope.modal.show();
+        });
+
+        //***************LISTENER*******************
+
+        $scope.$on('$destroy', function() {
+            $scope.modal.remove();
+        });
+        $scope.$on('modal.hidden', function() {
+            $state.go('app.home');
+        });
+    }]);
 /**
  * Created by touremamadou on 23/05/2016.
  */
 'use strict';
 
 app.service('GeoLocalisationService',[
-    '$cordovaGeolocation','$rootScope',
-    function($cordovaGeolocation,$rootScope){
+    '$cordovaGeolocation','$rootScope','$q',
+    function($cordovaGeolocation,$rootScope,$q){
+
+        var that = this;
+        var position = null;
+        var map = null;
+
+
 
         this.getPosition = function(){
-            var posOptions = {timeout: 10000, enableHighAccuracy: false};
-            $cordovaGeolocation
-                .getCurrentPosition(posOptions)
-                .then(function (position) {
-                    $rootScope.$broadcast('geolocalisation.success',{position:position});
-                }, function(err) {
-                    var message='';
-                    if(err.code === 1){//PositionError.PERMISSION_DENIED
-                        message='Veuillez nous autoriser à vous la geolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
-                    }else if(err.code === 2){ //PositionError.POSITION_UNAVAILABLE
-                        message='Veuillez vous connectez à internet, pour nous permettre d\'obtenir votre adresse de livraison';
-                    }else if(err.code === 3){ //PositionError.TIMEOUT
-                        message='Impossible de vous géolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
-                    }
-                    $rootScope.$broadcast('geolocalisation.error',{message:message});
-                    log(err);
+            var deferred = $q.defer();
+            if(that.position){
+                deferred.resolve(that.position);
+            }else{
+                var posOptions = {timeout: 10000, enableHighAccuracy: false};
+                $cordovaGeolocation
+                    .getCurrentPosition(posOptions)
+                    .then(function (position) {
+                        that.position = position;
+                        deferred.resolve(that.position);
+                        $rootScope.$broadcast('geolocalisation.success',{position:that.position});
+                    }, function(err) {
+                        var message='';
+                        if(err.code === 1){//PositionError.PERMISSION_DENIED
+                            message='Veuillez nous autoriser à vous la geolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
+                        }else if(err.code === 2){ //PositionError.POSITION_UNAVAILABLE
+                            message='Veuillez vous connectez à internet, pour nous permettre d\'obtenir votre adresse de livraison';
+                        }else if(err.code === 3){ //PositionError.TIMEOUT
+                            message='Impossible de vous géolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
+                        }
+                        deferred.reject(message);
+                        $rootScope.$broadcast('geolocalisation.error',{message:message});
+                        log(err);
+                    });
+            }
+
+            return deferred.promise;
+        };
+
+        this.getMap = function(){
+            var deferred = $q.defer();
+
+            if(that.map){
+                deferred.resolve(that.map);
+            }else{
+                that.getPosition().then(function(position){
+                    var coord = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+                    var mapOptions = {
+                        center: coord,
+                        zoom: 13,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+                     that.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+                     deferred.resolve(that.map);
+                     that.addMarker(that.map,{position:coord,title:'Votre position'});
+                },function(message){
+                    deferred.reject(message);
                 });
+            }
+            return deferred.promise;
+        };
+
+        this.addMarker = function(map,marker){
+
+            google.maps.event.addListenerOnce(map,'idle',function(){
+
+                var mark =  new google.maps.Marker({
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    position: marker.position,
+                    title: marker.title
+                });
+
+                var infoWindow = new google.maps.InfoWindow({
+                    content: marker.title
+                });
+
+                google.maps.event.addListener(mark, 'click', function () {
+                    infoWindow.open(map, mark);
+                });
+
+            });
 
         };
     }
 ]);
+/**
+ * Created by touremamadou on 31/05/2016.
+ */
+'use strict';
+
+app.directive('neemaMap',function(){
+   return {
+       restrict: 'E',
+       templateUrl:'js/view/map.html',
+       link: function(scope,element,attrib){
+
+       }
+   }
+});

@@ -11,4 +11,5 @@ app.controller('HomeController',['$scope','PlatService',function($scope,PlatServ
     $scope.$on('plat.list',function(event,args){
         $scope.plats = args.plats;
     });
+
 }]);

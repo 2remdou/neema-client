@@ -1,19 +1,15 @@
-<div class="bar bar-header">
-    <a class="button icon-left ion-chevron-left button-clear button-dark"></a>
-    <h2 class="title">{{plat.nom}}</h2>
-    <a class="button icon-right ion-chevron-right button-clear button-dark"></a>
+<div class="bar bar-subheader">
+    <h3 class="title">{{plat.nom}}</h3>
 </div>
 <ion-view>
     <ion-content scroll="true" class="padding has-header">
         <div class="list card">
-
             <div class="item item-avatar">
                 <img ng-src="{{pathServer}}/{{plat.restaurant.images[0].webPath}}/{{plat.restaurant.images[0].imageName}}">
                 <p>{{plat.restaurant.nom}}-{{plat.restaurant.quartier.nom}}</p>
-                <a class="item balanced" href="#">
+                <a class="item balanced padding-5 montant" href="#">
                     {{plat.prix}} GNF
                 </a>
-
             </div>
 
             <div class="item item-body">
@@ -21,7 +17,8 @@
                 <p>
                     {{plat.description}}
                 </p>
-                <a  class="button button-block button-balanced" ui-sref="commande({idPlat:plat.id})">Commander</a>
+                <button class="button button-block button-balanced" ng-click="addInPanier(plat)" ng-disabled="inPanier(plat)">Ajouter à la commande</button>
+                <button class="button button-block button-assertive" ng-click="removeInPanier(plat)" ng-show="inPanier(plat)">Retirer de la commande</button>
             </div>
 
         </div>
