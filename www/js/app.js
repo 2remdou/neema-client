@@ -9,12 +9,14 @@ var app = angular.module('neema',
         'ngMessages',
         'restangular',
         'ngCordova',
-        'angular-jwt'
+        'angular-jwt',
+        'timer'
     ]);
 
     app
-        .constant('PATHSERVER','http://localhost:8000')
-        .constant('UrlApi','http://localhost:8000/api')
+         .constant('UrlApi','http://localhost:8000/api')
+         .constant('INTERVAL_TIME_FOR_TRY_AGAIN_LOADING',300000) //5 minutes
+        //  .constant('UrlApi','https://neema.herokuapp.com/api')
     ;
 
 

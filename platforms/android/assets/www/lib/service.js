@@ -1,4 +1,60 @@
 /**
+ * Created by mdoutoure on 24/11/2015.
+ */
+
+var displayAlert = function(message,typeAlert,scope){
+    var response={};
+    response.data = [{texte:message,'typeAlert':typeAlert}];
+    successRequest(response,scope);
+
+}
+var successRequest = function(response,scope){
+    scope.$emit('showMessage',response.data);
+};
+
+var log = function(message){
+    console.log(message);
+};
+
+
+var extractId = function(object){
+        if(typeof object != "undefined" && object){
+            if(object.hasOwnProperty('id')){
+                return object.id;
+            }
+        }
+        return null;
+    };
+
+    var deleteProperty = function(object,property){
+        if(object.hasOwnProperty(property)){
+            delete  object[property];
+        }
+    };
+
+    var getSizeWindow= function() {
+          var myWidth = 0, myHeight = 0;
+          if( typeof( window.innerWidth ) == 'number' ) {
+            //Non-IE
+            myWidth = window.innerWidth;
+            myHeight = window.innerHeight;
+          } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+            //IE 6+ in 'standards compliant mode'
+            myWidth = document.documentElement.clientWidth;
+            myHeight = document.documentElement.clientHeight;
+          } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+            //IE 4 compatible
+            myWidth = document.body.clientWidth;
+            myHeight = document.body.clientHeight;
+          }
+          var result = {'width': myWidth,'height':myHeight};
+          return result;
+    };
+    var isDefined = function(object){
+        return angular.isDefined(object);
+    }
+
+/**
  * Created by touremamadou on 07/05/2016.
  */
 
@@ -22,7 +78,7 @@ app.service('CommandeService',
 
             this.list = function(){
                 _commandeService.getList().then(function(response){
-                    $rootScope.$broadcast('commande.list',{commandes:response});
+                    $rootScope.$broadcast('commande.list',{commandes:response.commandes});
                 },function(error){
                     var alert = {textAlert:error.data.textAlert,typeAlert:error.data.typeAlert};
                     $rootScope.$broadcast('show.message',{alert:error.data});
@@ -30,9 +86,19 @@ app.service('CommandeService',
                 });
             };
 
-            this.listByRestaurant = function(idRestaurant){
+            this.listByRestaurant = function(){
                 _commandeService.one('restaurantConnected').customGET().then(function(response){
-                    $rootScope.$broadcast('commande.list',{commandes:response.commandes});
+                    $rootScope.$broadcast('commande.list',{commandes:response});
+                },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                    log(error)
+                });
+
+            };
+
+            this.listByUserConnected = function(){
+                _commandeService.one('userConnected').getList().then(function(response){
+                    $rootScope.$broadcast('commande.list',{commandes:response});
                 },function(error){
                    log(error)
                 });
@@ -162,8 +228,8 @@ app.service('LivreurService',
  */
 
 app.service('PlatService',
-    ['$rootScope','Restangular',
-        function($rootScope,Restangular){
+    ['$rootScope','Restangular','$q',
+        function($rootScope,Restangular,$q){
 
             var self=this;
 
@@ -184,31 +250,41 @@ app.service('PlatService',
 
 
             this.list = function(){
-                _platService.customGET().then(function(response){
-                //_platService.getList().then(function(response){
-                    var plats = Restangular.restangularizeCollection(_platService,response.plats.data) ;
-                    $rootScope.$broadcast('plat.list',{plats:plats});
+                _platService.getList().then(function(response){
+                    $rootScope.$broadcast('plat.list',{plats:response});
                 },function(error){
                     log(error);
                 });
+            };
+
+            this.listOnMenu = function(page){
+                var deffered = $q.defer();
+                _platService.one('onMenu').getList(null,{page:page}).then(function(response){
+                    $rootScope.$broadcast('plat.list',{plats:response});
+                    deffered.resolve(response);
+                },function(error){
+                    deffered.reject(error);
+                    log(error);
+                });
+                return deffered.promise;
             };
 
             this.listByRestaurant = function(restaurant){
                 _platService.customGET(null,'restaurant/'+restaurant.id).then(function(response){
                     //_platService.getList().then(function(response){
-                    var plats = Restangular.restangularizeCollection(_platService,response.plats.data) ;
+                    var plats = Restangular.restangularizeCollection(_platService,response.plats);
                     $rootScope.$broadcast('plat.list',{plats:plats});
                 },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
                     log(error);
                 });
             };
 
             this.listByRestaurantByUserConnected = function(){
-                _platService.customGET('restaurant/userConnected').then(function(response){
-                    //_platService.getList().then(function(response){
-                    var plats = Restangular.restangularizeCollection(_platService,response.plats.data) ;
-                    $rootScope.$broadcast('plat.list',{plats:plats});
+                _platService.one('restaurant/userConnected').getList().then(function(response){
+                    $rootScope.$broadcast('plat.list',{plats:response});
                 },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
                     log(error);
                 });
             };
@@ -264,7 +340,8 @@ app.service('QuartierService',
                 _quartierService.getList().then(function(response){
                     $rootScope.$broadcast('quartier.list',{quartiers:response});
                 },function(error){
-                   log(error);
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                    log(error);
                 });
             };
 
@@ -312,10 +389,10 @@ app.service('RestaurantService',
 
             this.list = function(){
                 _restaurantService.getList().then(function(response){
-                    log(response);
                     $rootScope.$broadcast('restaurant.list',{restaurants:response});
                 },function(error){
-                   log(error);
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                    log(error);
                 });
             };
 
@@ -373,8 +450,8 @@ app.service('UploaderService',
  */
 
 app.service('UserService',
-    ['$rootScope','Restangular','localStorageFactory','jwtHelper',
-        function($rootScope,Restangular,localStorageFactory,jwtHelper){
+    ['$rootScope','Restangular','localStorageFactory','jwtHelper','$q',
+        function($rootScope,Restangular,localStorageFactory,jwtHelper,$q){
 
             var that=this;
             var user=null;
@@ -401,9 +478,21 @@ app.service('UserService',
                 });
             };
 
+
             this.inscription = function(user){
                 user.restaurant = extractId(user.restaurant);
                 _loginService.one('userRestaurant').post('',user).then(function(response){
+                    $rootScope.$broadcast('user.registred',{alert:response.data});
+                },function(error){
+                    that.clear();
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                });
+            };
+
+            this.inscriptionClient = function(user){
+                _loginService.post(user).then(function(response){
+                    that.setToken(response.data.token);
+                    $rootScope.userConnnected = that.getUser();
                     $rootScope.$broadcast('user.registred',{alert:response.data});
                 },function(error){
                     that.clear();
@@ -419,9 +508,49 @@ app.service('UserService',
                 });
             };
 
+            this.newPassword = function(username,newPassword,confirmationPassword){
+                _loginService.customPUT({username:username,newPassword:newPassword,confirmationPassword:confirmationPassword},'newPassword').then(function(response){
+                    $rootScope.$broadcast('user.password.changed',{alert:response.data});
+                },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                });
+            };
+
             this.reset = function(user){
                 _loginService.customPUT(user,'reset/'+user.id).then(function(response){
                     $rootScope.$broadcast('user.password.reseted',{alert:response.data});
+                },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                });
+            };
+
+            this.resetClient = function(user){
+                _loginService.customPUT(null,'resetClient/'+user.telephone).then(function(response){
+                    $rootScope.$broadcast('user.password.reseted',{alert:response.data});
+                },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                });
+            };
+
+            this.enabled = function(code){
+                _loginService.customPUT(code,'enabled').then(function(response){
+                    $rootScope.$broadcast('user.account.enabled',{alert:response.data});
+                },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                });
+            };
+
+            this.sendBackCodeActivation = function(telephone){
+                _loginService.customPUT({username:telephone},'sendBackActivationCode').then(function(response){
+                    $rootScope.$broadcast('user.code.sendback',{alert:response.data});
+                },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                });
+            };
+
+            this.checkCode = function(telephone,code){
+                _loginService.customPUT({username:telephone,code:code},'checkCode').then(function(response){
+                    $rootScope.$broadcast('user.code.checked',{alert:response.data});
                 },function(error){
                     $rootScope.$broadcast('show.message',{alert:error.data});
                 });
@@ -444,7 +573,6 @@ app.service('UserService',
             this.logout = function(){
                 that.clear();
                 $rootScope.$broadcast('user.logout');
-
             };
 
             this.setToken = function(token){
@@ -487,6 +615,7 @@ app.service('UserService',
 
             this.clear = function(){
                 localStorageFactory.clear();
+                user = null;
                 delete $rootScope.userConnnected;
             };
 
@@ -504,6 +633,14 @@ app.factory('localStorageFactory', ['$window', function($window) {
     },
     getObject: function(key) {
       return JSON.parse($window.localStorage[key] || null);
+    },
+    setArray: function(key, value) {
+      $window.localStorage[key] = JSON.stringify(value);
+    },
+    getArray: function(key) {
+        if($window.localStorage[key]) return JSON.parse($window.localStorage[key]);
+
+        return [];
     },
     clear:function(){
     	$window.localStorage.clear();

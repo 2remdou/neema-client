@@ -4,22 +4,21 @@
 'use strict';
 app.controller('CommandeController',
     ['$scope','PlatService','PanierService','$state','GeoLocalisationService',
-        'SpinnerService','CommandeService','PopupService',
+        'SpinnerService','CommandeService','PopupService','DistanceMatrixService',
         function($scope,PlatService,PanierService,$state,GeoLocalisationService,
-                 SpinnerService,CommandeService,PopupService){
+                 SpinnerService,CommandeService,PopupService,DistanceMatrixService){
 
+            $scope.waitFinishLoading=2;
             if(PanierService.isEmpty()){
-                var popup = {
-                    title:'Neema',
-                    message:'Aucun plat dans la commande, Veuillez selectionner un plat',
-                    cssClass:'popupInfo'
-                };
                 PopupService.show(popup).then(function(res){
                     $state.go('app.home');
                 });
 
             }
             $scope.commande={};
+            $scope.plats = PanierService.getPanier();
+            $scope.commande.restaurant = $scope.plats[0].restaurant;//car tous les plats viennent du même restaurant
+            $scope.commande.telephone = $scope.userConnected.username;
 
 
             SpinnerService.start();
@@ -44,15 +43,33 @@ app.controller('CommandeController',
 
 
             GeoLocalisationService.getPosition().then(function(position){
+                $scope.waitFinishLoading --;
                 $scope.commande.latitude = position.coords.latitude;
                 $scope.commande.longitude = position.coords.longitude;
 
-                $scope.plats = PanierService.getPanier();
+                //determination la distance et le temps entre le restaurant et le client
+
+                var origin = {lat:parseFloat($scope.commande.restaurant.latitude),lng:parseFloat($scope.commande.restaurant.longitude)};
+                var destination = {lat:parseFloat($scope.commande.latitude),lng:parseFloat($scope.commande.longitude)};
+                
+                DistanceMatrixService.getDistanceMatrix(origin,destination).then(function(distanceMatrice){
+                    $scope.waitFinishLoading --;
+                    $scope.commande.durationLivraison=distanceMatrice.duration.value;
+                    $scope.commande.distance=distanceMatrice.distance.value;
+                },function(message){
+                    SpinnerService.stop();
+                    var popup = {
+                        title:'Echec lors du calcul de la distance',
+                        message:message,
+                        cssClass:'popupDanger'
+                    };
+                    PopupService.show(popup).then(function(res){
+                        $state.go('app.home');
+                    });
+                });
 
                 refreshCommande();
 
-                $scope.commande.telephone = $scope.userConnected.username;
-                SpinnerService.stop();
             },function(message){
                 SpinnerService.stop();
                 var popup = {
@@ -85,9 +102,10 @@ app.controller('CommandeController',
             };
 
             $scope.valider = function(commande){
+                var c = angular.copy(commande);
+                c.restaurant = c.restaurant.id;
                 SpinnerService.start();
-                commande.restaurant = $scope.plats[0].restaurant.id;
-                CommandeService.post(commande);
+                CommandeService.post(c);
 
             };
 
@@ -103,6 +121,11 @@ app.controller('CommandeController',
                     }
                 });
             };
+
+        $scope.$watch('waitFinishLoading', function(newValue, oldValue, scope) {
+            if($scope.waitFinishLoading<=0) SpinnerService.stop();
+        });
+
 
 
             //***************LISTENER*******************

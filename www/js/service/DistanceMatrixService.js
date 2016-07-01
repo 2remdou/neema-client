@@ -21,8 +21,8 @@ app.service('DistanceMatrixService',[
             },function(response,status){ 
                 if(status === google.maps.DistanceMatrixStatus.OK){
                      var distanceMatrix={};
-                     distanceMatrix.distance = response.rows[0].elements[0].distance.text;
-                     distanceMatrix.duration = response.rows[0].elements[0].duration.text;
+                     distanceMatrix.distance = response.rows[0].elements[0].distance;
+                     distanceMatrix.duration = response.rows[0].elements[0].duration;
                      deffered.resolve(distanceMatrix);
                     //  $rootScope.$broadcast('distance.duration.defined',{distance:distance,duration:duration});
                 }else{

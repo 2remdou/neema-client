@@ -55,6 +55,7 @@ app.service('PanierService',
 
         this.clear = function(){
             panier = [];
+            restaurantPanier = null;
             localStorageFactory.setArray('panier',panier);
 
         };

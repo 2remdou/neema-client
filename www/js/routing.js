@@ -138,8 +138,8 @@ app.config(['$stateProvider',function($stateProvider) {
             cache: enabledCache,
             views:{
                 'menuContent':{
-                    templateUrl: 'js/view/suivi.html',
-                    controller:'SuiviController'
+                    templateUrl: 'js/view/infoCommande.html',
+                    controller:'InfoCommandeController'
                 }
             }
         })

@@ -16,28 +16,25 @@ app.service('GeoLocalisationService',[
 
         this.getPosition = function(){
             var deferred = $q.defer();
-            if(that.position){
-                deferred.resolve(that.position);
-            }else{
-                var posOptions = {timeout: 10000, enableHighAccuracy: false};
-                $cordovaGeolocation
-                    .getCurrentPosition(posOptions)
-                    .then(function (position) {
-                        that.position = position;
-                        deferred.resolve(that.position);
-                        $rootScope.$broadcast('geolocalisation.success',{position:that.position});
-                    }, function(err) {
-                        var message='';
-                        if(err.code === 1){//PositionError.PERMISSION_DENIED
-                            message='Veuillez activer la geolocalisation(GPS), pour nous permettre d\' obtenir votre adresse de livraison';
-                        }else if(err.code === 2){ //PositionError.POSITION_UNAVAILABLE
-                            message='Veuillez vous connectez à internet, pour nous permettre d\'obtenir votre adresse de livraison';
-                        }else if(err.code === 3){ //PositionError.TIMEOUT
-                            message='Impossible de vous géolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
-                        }
-                        deferred.reject(message);
-                    });
-            }
+
+            var posOptions = {timeout: 10000, enableHighAccuracy: false};
+            $cordovaGeolocation
+                .getCurrentPosition(posOptions)
+                .then(function (position) {
+                    that.position = position;
+                    deferred.resolve(that.position);
+                    $rootScope.$broadcast('geolocalisation.success',{position:that.position});
+                }, function(err) {
+                    var message='';
+                    if(err.code === 1){//PositionError.PERMISSION_DENIED
+                        message='Veuillez activer la geolocalisation(GPS), pour nous permettre d\' obtenir votre adresse de livraison';
+                    }else if(err.code === 2){ //PositionError.POSITION_UNAVAILABLE
+                        message='Veuillez vous connectez à internet, pour nous permettre d\'obtenir votre adresse de livraison';
+                    }else if(err.code === 3){ //PositionError.TIMEOUT
+                        message='Impossible de vous géolocaliser, pour nous permettre d\' obtenir votre adresse de livraison';
+                    }
+                    deferred.reject(message);
+                });
 
             return deferred.promise;
         };

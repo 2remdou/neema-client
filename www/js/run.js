@@ -1,6 +1,6 @@
 app
     .run(
-    ['$ionicPlatform','$state',function($ionicPlatform,$state) {
+    ['$ionicPlatform','$state','$location',function($ionicPlatform,$state,$location) {
         $ionicPlatform.ready(function() {
             if(window.cordova && window.cordova.plugins.Keyboard) {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -15,6 +15,7 @@ app
             if(window.StatusBar) {
                 StatusBar.styleDefault();
             }
+            // $location.path('/list');
 
             //$state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
         });
@@ -22,9 +23,8 @@ app
 
     }])
     .run(
-    ['PATHSERVER','$rootScope','UserService','SpinnerService','$state',
-        function(PATHSERVER,$rootScope,UserService,SpinnerService,$state){
-            $rootScope.pathServer = PATHSERVER;
+    ['$rootScope','UserService','SpinnerService','$state',
+        function($rootScope,UserService,SpinnerService,$state){
 
             $rootScope.userConnected = UserService.getUser();
 

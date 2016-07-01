@@ -16,11 +16,16 @@
                 <p>{{plat.restaurant.nom}}-{{plat.restaurant.quartier.nom}}</p>
             </div>
             <div class="item item-image">
-                <img ng-src="{{pathServer}}/{{plat.image.webPath}}/{{plat.image.imageName}}" alt="{{plat.image.imageName}}">
+                <img ng-src="{{plat.image.webPath}}/{{plat.image.imageName}}" alt="{{plat.image.imageName}}">
             </div>
             <a class="item item-icon-left assertive" href="#">
                 {{plat.prix}} GNF
             </a>
         </div>
+        <ion-infinite-scroll
+        on-infinite="loadMore()"
+        icon="ion-loading-c"
+        distance="5%">
+        </ion-infinite-scroll>
     </ion-content>
 </ion-view>

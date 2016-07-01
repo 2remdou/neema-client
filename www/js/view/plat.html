@@ -5,15 +5,15 @@
     <ion-content scroll="true" class="padding has-header">
         <div class="list card">
             <div class="item item-avatar">
-                <img ng-src="{{pathServer}}/{{plat.restaurant.images[0].webPath}}/{{plat.restaurant.images[0].imageName}}">
+                <img ng-src="{{plat.restaurant.imageRestaurants[0].webPath}}/{{plat.restaurant.imageRestaurants[0].imageName}}">
                 <p>{{plat.restaurant.nom}}-{{plat.restaurant.quartier.nom}}</p>
                 <a class="item balanced padding-5 montant" href="#">
-                    {{plat.prix}} GNF
+                    {{plat.prix|montant}}
                 </a>
             </div>
 
             <div class="item item-body">
-                <img class="full-image" ng-src="{{pathServer}}/{{plat.image.webPath}}/{{plat.image.imageName}}">
+                <img class="full-image" ng-src="{{plat.imagePlat.webPath}}/{{plat.imagePlat.imageName}}">
                 <p>
                     {{plat.description}}
                 </p>

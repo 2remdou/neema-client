@@ -6,36 +6,16 @@
 var app = angular.module('neema',
     [
         'ionic',
+        'ngMessages',
         'restangular',
-        'ngCordova'
-    ])
-        .constant('PATHSERVER','http://localhost:8000')
-        .constant('UrlApi','http://localhost:8000/api')
-    .run(['$ionicPlatform','$state',function($ionicPlatform,$state) {
-        $ionicPlatform.ready(function() {
-            if(window.cordova && window.cordova.plugins.Keyboard) {
-                // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-                // for form inputs)
-                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        'ngCordova',
+        'angular-jwt'
+    ]);
 
-                // Don't remove this line unless you know what you are doing. It stops the viewport
-                // from snapping when text inputs are focused. Ionic handles this internally for
-                // a much nicer keyboard experience.
-                cordova.plugins.Keyboard.disableScroll(true);
-            }
-            if(window.StatusBar) {
-                StatusBar.styleDefault();
-            }
-
-            //$state.go('commande',{idPlat:'2241ef6a-14b9-11e6-b945-e0397cc46092'});
-            $state.go('app.home');
-        });
-
-
-    }])
-        .run(['PATHSERVER','$rootScope',function(PATHSERVER,$rootScope){
-            $rootScope.pathServer = PATHSERVER;
-        }])
+    app
+         .constant('UrlApi','https://neema.herokuapp.com/api')
+        //  .constant('UrlApi','http://localhost:8000/api')
+         .constant('INTERVAL_TIME_FOR_TRY_AGAIN_LOADING',300000) //5 minutes
     ;
 
 

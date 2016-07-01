@@ -3,63 +3,122 @@
  */
 'use strict';
 app.controller('CommandeController',
-    ['$scope','PlatService','$stateParams','$state','GeoLocalisationService','$ionicLoading','CommandeService',
-        function($scope,PlatService,$stateParams,$state,GeoLocalisationService,$ionicLoading,CommandeService){
+    ['$scope','PlatService','PanierService','$state','GeoLocalisationService',
+        'SpinnerService','CommandeService','PopupService',
+        function($scope,PlatService,PanierService,$state,GeoLocalisationService,
+                 SpinnerService,CommandeService,PopupService){
 
+            if(PanierService.isEmpty()){
+                var popup = {
+                    title:'Neema',
+                    message:'Aucun plat dans la commande, Veuillez selectionner un plat',
+                    cssClass:'popupInfo'
+                };
+                PopupService.show(popup).then(function(res){
+                    $state.go('app.home');
+                });
+
+            }
             $scope.commande={};
 
-            if(!$stateParams.idPlat) $state.go('app.home');
 
-            $scope.nbreLoader = 2;
-            $ionicLoading.show({
-                templateUrl: 'js/view/spinner.html'
-            });
+            SpinnerService.start();
+
+            var refreshCommande = function(){
+                $scope.commande.total = 0;
+                $scope.commande.detailCommandes = [];
+                angular.forEach($scope.plats,function(plat){
+                    $scope.commande.detailCommandes.push({
+                        quantite:1,
+                        prix:plat.prix,
+                        plat:plat.id
+                    });
+                    $scope.commande.total += parseInt(plat.prix);
+
+                });
+
+                $scope.commande.total += parseInt($scope.commande.fraisTransport);
+            };
+
+            $scope.commande.fraisTransport = Math.floor(Math.random() * 15000 + 10000) ;
+
 
             GeoLocalisationService.getPosition().then(function(position){
-                $scope.nbreLoader--;
-                $scope.errorGeoLocalisation = false;
                 $scope.commande.latitude = position.coords.latitude;
                 $scope.commande.longitude = position.coords.longitude;
+
+                $scope.plats = PanierService.getPanier();
+
+                refreshCommande();
+
+                $scope.commande.telephone = $scope.userConnected.username;
+                SpinnerService.stop();
             },function(message){
-                $scope.nbreLoader--;
-                $scope.errorGeoLocalisation = true;
-                $scope.messageErrorLocalisation = message;
+                SpinnerService.stop();
+                var popup = {
+                    title:'Géolocalisation',
+                    message:message,
+                    cssClass:'popupDanger'
+                };
+                PopupService.show(popup).then(function(res){
+                    $state.go('app.home');
+                });
+
             });
 
-            PlatService.get($stateParams.idPlat).then(function(response){
-                $scope.nbreLoader--;
-                $scope.plat = response;
-                $scope.transport = Math.floor(Math.random() * 15000 + 10000) ;
+            $scope.removeInPanier = function(plat){
+                if($scope.plats.length===1){
+                    $scope.clearPanier();
+                    return;
+                }
+                var popup = {
+                    title: 'Confirmation',
+                    message: 'Voulez-vous retirer ce plat de la commande ?'
+                };
+                PopupService.confirmation(popup).then(function(res) {
+                    if(res){
+                        PanierService.remove(plat);
+                        refreshCommande();
+                    }
+                });
 
-                $scope.total = $scope.plat.prix+$scope.transport;
-
-            },function(error){
-                $state.go('app.home')
-            });
+            };
 
             $scope.valider = function(commande){
-                var detailCommande = {
-                    quantite:1,
-                    prix:$scope.plat.prix,
-                    plat:$scope.plat.id
-                };
-                commande.detailCommandes = [detailCommande];
-                commande.fraisTransport = $scope.transport;
+                SpinnerService.start();
+                commande.restaurant = $scope.plats[0].restaurant.id;
                 CommandeService.post(commande);
 
             };
 
-            $scope.$watch('nbreLoader', function(newValue, oldValue, scope) {
-                if($scope.nbreLoader<=0) $ionicLoading.hide();
-                ;
-            });
-
+            $scope.clearPanier = function() {
+                var popup = {
+                    title: 'Confirmation',
+                    message: 'Voulez-vous vider le panier'
+                };
+                PopupService.confirmation(popup).then(function(res) {
+                    if(res){
+                        PanierService.clear();
+                        $state.go('app.home');
+                    }
+                });
+            };
 
 
             //***************LISTENER*******************
 
             $scope.$on('commande.created',function(event,args){
-                log(args);
+                SpinnerService.stop();
+                PanierService.clear();
+                var popup = {
+                    title: 'Commande',
+                    message: 'Votre commande a été reçu',
+                    cssClass: 'popupSuccess'
+                };
+                PopupService.show(popup).then(function(res) {
+                    $state.go('app.suivi');
+                });
+
             });
 
         }]);

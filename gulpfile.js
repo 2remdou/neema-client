@@ -53,7 +53,10 @@ gulp.task('app',function () {
         'www/lib/angular-messages/angular-messages.min.js',
         'www/lib/restangular/dist/restangular.min.js',
         'www/lib/angular-jwt/dist/angular-jwt.min.js',
-        'www/lib/ionic-select-control/dist/SelectBox.min.js',
+        'www/lib/angular-timer/dist/angular-timer.min.js',
+        'www/lib/moment/min/moment.min.js',
+        'www/lib/moment/min/locales.min.js',
+        'www/lib/humanize-duration/humanize-duration.js',
         'www/lib/service',
         'www/js/**/*.js'
     ])
