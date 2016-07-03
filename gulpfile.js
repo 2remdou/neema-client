@@ -47,7 +47,7 @@ gulp.task('install', ['git-check'], function() {
 
 gulp.task('app',function () {
     return gulp.src([
-        'www/lib/ionic/js/ionic.bundle.min.js',
+        // 'www/lib/ionic/js/ionic.bundle.min.js',
         'www/lib/ngCordova/dist/ng-cordova.min.js',
         'www/lib/lodash/dist/lodash.min.js',
         'www/lib/angular-messages/angular-messages.min.js',
@@ -60,7 +60,7 @@ gulp.task('app',function () {
         'www/lib/service',
         'www/js/**/*.js'
     ])
-        .pipe(concat('lib.js'))
+        .pipe(concat('libs.js'))
         .pipe(gulp.dest('www/lib/'));
 });
 
@@ -79,3 +79,5 @@ gulp.task('git-check', function(done) {
 
 
 //cp ../neema/web/bundles/service.js www/lib/
+
+//grep -rl app. .|xargs sed -i "" 's/app.//g'(chercher et remplacer "app." dans le repertoire courant par '')

@@ -3,11 +3,9 @@
 
 # IntelliJ project files
 .idea
-/platforms
 *.iml
 !www/lib/service.js
 www/lib
-platforms
 out
 gen
 node_modules

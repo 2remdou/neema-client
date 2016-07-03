@@ -7,45 +7,73 @@
 
 
     <!-- compiled css output -->
-    <link href="css/ionic.app.css" rel="stylesheet">
+    <link href="css/ionic.app.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-    <link href="lib/ionic-select-control/dist/SelectBox.min.css" rel="stylesheet">
 
     <!-- ionic/angularjs js -->
-    <!--<script src="lib/ionic/js/ionic.bundle.js"></script>-->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+
+    <!-- your app's js -->
+    <script src="lib/libs.js"></script>
 
       <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
-    <!-- your app's js -->
-    <script src="lib/lib.js"></script>
+      <!--service-->
+      <script src="lib/service.js"></script>
+
     <script src="https://maps.google.com/maps/api/js?key=AIzaSyCXPmdF5YDDvEOwb6IYlow1Zr_rTknCIn8"></script>
     <!--<script src="http://maps.google.com/maps/api/js?key=AIzaSyCXPmdF5YDDvEOwb6IYlow1Zr_rTknCIn8"></script>-->
 
 
 
-      <!--service-->
-      <script src="lib/service.js"></script>
-
-      <!--controller-->
-      <script src="js/controller/HomeController.js"></script>
 
   </head>
-  <body ng-app="neema">
-<!--
-      <div class="bar bar-header item-input-inset">
-          <a class="button button-icon icon-left ion-home" ui-sref="app.home"></a>
-          <label class="item-input-wrapper">
-              <i class="icon ion-ios-search placeholder-icon"></i>
-              <input type="search" placeholder="Qu'est ce que vous voulez manger">
-          </label>
-          <button class="button button-clear">
-              Annuler
-          </button>
-      </div>
--->
+    <body ng-app="neema">
+        <ion-side-menus>
+            <ion-side-menu-content>
+                <ion-nav-bar class="bar-stable">
+                <ion-nav-back-button>
+                </ion-nav-back-button>
 
-      <ion-nav-view>
-      </ion-nav-view>
-  </body>
+                <ion-nav-buttons side="left">
+                    <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+                    </button>
+                </ion-nav-buttons>
+                <ion-nav-buttons side="right">
+                    <a ui-sref="commande" ng-hide="panierIsEmpty()" class="button button-icon button-clear ion-android-cart">
+                    </a>
+                </ion-nav-buttons>
+                </ion-nav-bar>
+                <ion-nav-view animation="slide-left-right"></ion-nav-view>
+            </ion-side-menu-content>
+
+            <ion-side-menu side="left">
+                <ion-header-bar class="bar-stable">
+                <h1 class="title">Neema</h1>
+                </ion-header-bar>
+                <ion-content>
+                    <ion-list>
+                        <ion-item ng-hide="userConnected" menu-close ui-sref="login" class="cursor-pointer">
+                        <i class="icon ion-person"></i>
+                        Connexion
+                        </ion-item>
+                        <ion-item ng-show="userConnected" menu-close ui-sref="home" class="cursor-pointer">
+                        <i class="icon ion-home"></i>
+                        Accueil
+                        </ion-item>
+                        <ion-item  ng-show="userConnected" menu-close ui-sref="suivi" class="cursor-pointer">
+                        <i class="icon ion-map"></i>
+                        Suivi commande
+                        </ion-item>
+                        <ion-item ng-show="userConnected" menu-close ui-sref="logout" class="cursor-pointer">
+                        <i class="icon ion-unlocked"></i>
+                        Deconnexion
+                        </ion-item>
+                    </ion-list>
+                </ion-content>
+            </ion-side-menu>
+        </ion-side-menus>  
+    </body>
 </html>
