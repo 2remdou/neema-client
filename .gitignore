@@ -3,6 +3,7 @@
 
 # IntelliJ project files
 .idea
+/platforms
 *.iml
 !www/lib/service.js
 www/lib

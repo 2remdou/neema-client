@@ -51,7 +51,6 @@ app.controller('CommandeController',
 
                 var origin = {lat:parseFloat($scope.commande.restaurant.latitude),lng:parseFloat($scope.commande.restaurant.longitude)};
                 var destination = {lat:parseFloat($scope.commande.latitude),lng:parseFloat($scope.commande.longitude)};
-                
                 DistanceMatrixService.getDistanceMatrix(origin,destination).then(function(distanceMatrice){
                     $scope.waitFinishLoading --;
                     $scope.commande.durationLivraison=distanceMatrice.duration.value;

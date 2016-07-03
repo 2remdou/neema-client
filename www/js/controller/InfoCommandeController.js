@@ -43,9 +43,10 @@ app.controller('InfoCommandeController',
                 });
 
             });
-
+            
             //selectionner la premiere commande par defaut
-            $scope.commandes[$scope.indexSelected].selected = true;
+            if($scope.commandes.length !== 0)
+                $scope.commandes[$scope.indexSelected].selected = true;
 
 
             SpinnerService.stop();

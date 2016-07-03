@@ -37,6 +37,9 @@ app
 
             $rootScope.$on('show.message',function(event,args){
                 SpinnerService.stop();
+                if(!args.alert){
+                    args.alert = {textAlert:'Ooops, nous allons régler ce petit souci dans quelques instants',typeAlert:'danger'}
+                }
                 var alert = args.alert;
                 var popup = {
                     title:'Neema',
