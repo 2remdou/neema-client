@@ -5,6 +5,8 @@
 .idea
 *.iml
 !www/lib/service.js
+/platforms/android
+/platforms/ios
 www/lib
 out
 gen
