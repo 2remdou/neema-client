@@ -49,7 +49,7 @@ app.service('GeoLocalisationService',[
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
                  map = new google.maps.Map(document.getElementById("map"), mapOptions);
-                 deferred.resolve(map);
+                 deferred.resolve({map:map,position:position});
                 },function(message){
                     deferred.reject(message);
                 });

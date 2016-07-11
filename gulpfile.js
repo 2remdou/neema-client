@@ -11,7 +11,7 @@ var paths = {
   sass: ['./scss/**/*.scss']
 };
 
-gulp.task('default', ['sass']);
+gulp.task('default', ['sass','app']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -47,9 +47,11 @@ gulp.task('install', ['git-check'], function() {
 
 gulp.task('app',function () {
     return gulp.src([
-        // 'www/lib/ionic/js/ionic.bundle.min.js',
-        'www/lib/ngCordova/dist/ng-cordova.min.js',
+        'www/lib/ionic/js/ionic.bundle.min.js',
         'www/lib/lodash/dist/lodash.min.js',
+        'www/lib/ngCordova/dist/ng-cordova.min.js',
+        'www/lib/angular-permission/dist/angular-permission.min.js',
+        'www/lib/angular-permission/dist/angular-permission-ui.min.js',
         'www/lib/angular-messages/angular-messages.min.js',
         'www/lib/restangular/dist/restangular.min.js',
         'www/lib/angular-jwt/dist/angular-jwt.min.js',
@@ -57,10 +59,10 @@ gulp.task('app',function () {
         'www/lib/moment/min/moment.min.js',
         'www/lib/moment/min/locales.min.js',
         'www/lib/humanize-duration/humanize-duration.js',
-        'www/lib/service',
-        'www/js/**/*.js'
+        'www/js/**/*.js',
+        'www/lib/service'
     ])
-        .pipe(concat('libs.js'))
+        .pipe(concat('lib.js'))
         .pipe(gulp.dest('www/lib/'));
 });
 

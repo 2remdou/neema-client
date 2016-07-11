@@ -2,11 +2,14 @@
  * Created by touremamadou on 06/05/2016.
  */
 'use strict';
-app.
-    config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRouterProvider) {
+app
+    .config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRouterProvider) {
         var enabledCache = false;
 
-        $urlRouterProvider.otherwise('/home');
+        $urlRouterProvider.otherwise( function($injector) {
+            var $state = $injector.get("$state");
+            $state.go('home');
+        });
         
         $stateProvider
             .state('home', {
@@ -56,6 +59,12 @@ app.
                 templateUrl: 'js/view/newPassword.html',
                 controller:'NewPasswordController'
             })
+            .state('changePassword', {
+                url: '/changePassword',
+                cache: enabledCache,
+                templateUrl: 'js/view/changePassword.html',
+                controller:'NewPasswordController'
+            })
             .state('plat', {
                 url: '/plat/:idPlat',
                 cache: enabledCache,
@@ -80,5 +89,30 @@ app.
                 templateUrl: 'js/view/infoCommande.html',
                 controller:'InfoCommandeController'
             })
+            .state('suiviLivraison', {
+                url: '/suivi-livraison',
+                cache: enabledCache,
+                templateUrl: 'js/view/suiviLivraison.html',
+                controller:'SuiviLivraisonController',
+                data: {
+                    permissions: {
+                        only: ['ROLE_LIVREUR'],
+                        redirectTo:'home'
+                    }
+                }
+            })
+            .state('showMapLivraison', {
+                url: '/show-map-livraison',
+                cache: enabledCache,
+                templateUrl: 'js/view/mapLivraison.html',
+                controller:'MapLivraisonController',
+                data: {
+                    permissions: {
+                        only: ['ROLE_LIVREUR'],
+                        redirectTo:'home'
+                    }
+                }
+            })
+
         ;
     }]);

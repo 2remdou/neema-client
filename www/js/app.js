@@ -10,11 +10,13 @@ var app = angular.module('neema',
         'restangular',
         'ngCordova',
         'angular-jwt',
-        'timer'
+        'timer',
+        'permission',
+        'permission.ui',
     ]);
     
     app
-        //  .constant('UrlApi','http://localhost:8000/api')
+         //.constant('UrlApi','http://localhost:8000/api')
          .constant('INTERVAL_TIME_FOR_TRY_AGAIN_LOADING',300000) //5 minutes
          .constant('UrlApi','https://neema.herokuapp.com/api')
     ;

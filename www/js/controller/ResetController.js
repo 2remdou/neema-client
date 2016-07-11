@@ -66,8 +66,8 @@ app
 
     }])
     .controller('NewPasswordController',
-        ['$scope','UserService','SpinnerService','PopupService','localStorageFactory','$state',
-        function($scope,UserService,SpinnerService,PopupService,localStorageFactory,$state){
+        ['$scope','UserService','SpinnerService','PopupService','localStorageFactory','$state','$rootScope',
+        function($scope,UserService,SpinnerService,PopupService,localStorageFactory,$state,$rootScope){
 
             $scope.user = {};
             $scope.reset = function(form){
@@ -85,8 +85,11 @@ app
                 }
 
                 SpinnerService.start();
-
-                UserService.newPassword(localStorageFactory.get('telephone'),$scope.user.newPassword,$scope.user.confirmationPassword);
+                if($rootScope.isClient){
+                    UserService.newPassword(localStorageFactory.get('telephone'),$scope.user.newPassword,$scope.user.confirmationPassword);
+                }else if($rootScope.isLivreur){
+                    UserService.changePassword($scope.user);
+                }
 
             };
 

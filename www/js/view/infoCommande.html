@@ -9,7 +9,7 @@
                         ng-change="selectCommande($selected)">
                     <option value="" selected>Selectionner une commande</option>
                     <option ng-repeat="commande in commandes track by commande.id|filter:orderBy:commande.dateCommande "
-                            value="{{commande.id}}">{{commande.restaurant.nom}}({{commande.dateCommande|date:'dd/MM/yyyy h:mm:ss':'+GMT'}})</option>
+                            value="{{commande.id}}">{{commande.restaurant.nom}}({{commande.dateCommande|date:'dd/MM/yyyy H:mm:ss':'+GMT'}})</option>
                 </select>
             </label>
             <div ng-show="commande.selected" ng-repeat="commande in commandes track by commande.id|filter:orderBy:commande.dateCommande ">

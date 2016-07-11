@@ -21,8 +21,9 @@ app.service('PopupService',
             return $ionicPopup.confirm({
                 title: popup.title||'Confirmation',
                 template: popup.message,
-                cancelText:'Annuler',
+                cancelText:'Non',
                 cancelType:'button-positive',
+                okText:'Oui',
                 okType:'button-default'
             });
         };

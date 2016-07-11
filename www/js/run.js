@@ -15,7 +15,6 @@ app
             if(window.StatusBar) {
                 StatusBar.styleDefault();
             }
-            $location.path('/');
             // $state.go('suivi');
         });
 
@@ -25,9 +24,9 @@ app
     ['$rootScope','UserService','SpinnerService','$state',
         function($rootScope,UserService,SpinnerService,$state){
 
-            $rootScope.userConnected = UserService.getUser();
+            UserService.initUser();
 
-            if(!$rootScope.userConnected) $state.go('app.login');
+            if(!$rootScope.userConnected) $state.go('login');
 
     }])
     .run(
@@ -50,16 +49,19 @@ app
 
         }])
     .run(
-    ['Restangular','$state','SpinnerService',
-        function(Restangular,$state,SpinnerService){
+    ['Restangular','$state','SpinnerService','$rootScope',
+        function(Restangular,$state,SpinnerService,$rootScope){
             Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
 
                 if(response.status === 401) {
-                    $state.go('app.login');
+                    $state.go('login');
                 }
 
                 if(response.status === 409) {
-                    $state.go('app.codeForActivation');
+                    if($rootScope.isClient)
+                        $state.go('codeForActivation');
+                    else if($rootScope.isLivreur)
+                        $state.go('changePassword');
                 }
 
                 SpinnerService.stop();
@@ -76,6 +78,28 @@ app
             $rootScope.panierIsEmpty = PanierService.isEmpty;
 
             $rootScope.inPanier = PanierService.inPanier;
+    }])
+    .run(['PermissionStore','UserService','$rootScope','PopupService',
+            function(PermissionStore,UserService,$rootScope,PopupService){
+        function checkRole(roleName){
+            var roles = UserService.getRoles();
+            if(roles.indexOf(roleName) !== -1) return true;
+
+            return false;
+        }
+        PermissionStore.defineManyPermissions(['ROLE_LIVREUR','ROLE_CLIENT'],function(permissionName, transitionProperties){
+            return checkRole(permissionName);
+        });
+
+        $rootScope.$on('$stateChangePermissionDenied', function(event, toState, toParams, options) {
+            var alert = {textAlert:'Vous n\'êtes pas autorisé à acceder à cette partie',typeAlert:'danger'};
+                var popup = {
+                    title:'Neema',
+                    message:alert.textAlert,
+                    cssClass:'popup'+alert.typeAlert.capitalizeFirstLetter()
+                };
+                PopupService.show(popup);
+        });
     }])
 
     ;

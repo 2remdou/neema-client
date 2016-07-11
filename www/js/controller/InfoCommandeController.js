@@ -44,7 +44,7 @@ app.controller('InfoCommandeController',
 
             });
             
-            //selectionner la premiere commande par defaut
+            //selectionner la premiere commande à afficher par defaut
             if($scope.commandes.length !== 0)
                 $scope.commandes[$scope.indexSelected].selected = true;
 

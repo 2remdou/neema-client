@@ -24,9 +24,12 @@ app
 
             //**********LISTENER************
             $scope.$on('user.connected',function(event,args){
-                $rootScope.userConnected = UserService.getUser();
+                UserService.initUser();
                 SpinnerService.stop();
-                $state.go('home'); 
+                if($rootScope.isClient)
+                    $state.go('home'); 
+                else if($rootScope.isLivreur)
+                    $state.go('suiviLivraison');
 
             });
 
