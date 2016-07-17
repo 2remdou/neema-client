@@ -16,6 +16,7 @@ app
 
                 SpinnerService.start();
 
+                UserService.clear();
                 UserService.login($scope.user);
 
             };
