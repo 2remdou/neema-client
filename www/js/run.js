@@ -21,12 +21,24 @@ app
 
     }])
     .run(
-    ['$rootScope','UserService','SpinnerService','$state',
-        function($rootScope,UserService,SpinnerService,$state){
+    ['$rootScope','UserService','SpinnerService','$state','Restangular',
+        function($rootScope,UserService,SpinnerService,$state,Restangular){
 
             UserService.initUser();
 
             if(!$rootScope.userConnected) $state.go('login');
+
+            $rootScope.search = function(key){
+                SpinnerService.start();
+                Restangular.all('search').customGET(null,{key:key}).then(function(response){
+                    var plats = _.uniqBy(response.plats,'id');
+                    $rootScope.$broadcast('search.finished',{plats:plats});
+                    SpinnerService.stop();
+                },function(error){
+                    $rootScope.$broadcast('show.message',{alert:error.data});
+                    log(error);
+                });
+            };
 
     }])
     .run(

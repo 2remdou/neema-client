@@ -3,17 +3,16 @@
         <div class="row" ng-repeat="plat in plats track by plat.id|orderBy:plat.prix:false">
             <p> <i class="icon ion-android-restaurant"></i>  {{plat.nom}}</p>
             <p class="montant">{{plat.prix|montant}} <a ng-click="removeInPanier(plat)" class=" cursor-pointer icon ion-android-cancel assertive"></a></p>
-
         </div>
-        <div class="row" style="position: relative">
-            <p><i class="icon ion-android-bicycle"></i> Transport</p>
-            <p class="montant">{{commande.fraisTransport|montant}}</p>
+        <div class="row">
+            <p> <i class="icon ion-ios-cart"></i>  Frais commande</p>
+            <p class="montant">{{commande.fraisCommande|montant}} <a ng-click="removeInPanier(plat)" class=" cursor-pointer icon ion-android-cancel assertive"></a></p>
         </div>
 
         <hr>
         <div class="row item">
             <h2>TOTAL</h2>
-            <strong class="montant">{{commande.total|montant}}</strong>
+            <strong class="montant">{{commande.totalCommande|montant}}</strong>
         </div>
         <br>
         <div class="list">

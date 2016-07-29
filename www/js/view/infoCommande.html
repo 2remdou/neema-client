@@ -15,13 +15,18 @@
             <div ng-show="commande.selected" ng-repeat="commande in commandes track by commande.id|filter:orderBy:commande.dateCommande ">
                 <p  class="item item-icon-left" >
                     <i class="icon ion-clock"></i>
-                        Livraison dans :
+                         Dans : 
                             <timer countdown="commande.dureeRestant" max-time-unit="'minute'" interval="1000">  
                                 <neema-color-timer minute="mminutes" seconde="sseconds">
                                    {{mminutes}} m {{sseconds}} s
                                 </neema-color-timer>
                             </timer>
-                        <!--{{commande.distance|conversion:'metre':'km'}})-->
+                </p>
+                <p  class="item item-icon-right" >
+                    <i class="icon ion-key cursor-pointer" ng-click="showCodeCommande()"></i>
+                         Code secret : 
+                            <span ng-hide="codeCommandeVisible">********</span>
+                            <span ng-show="codeCommandeVisible">{{commande.codeCommande}}</span>
                 </p>
                 <h5 class="text-center">Les details de la commande</h5>
                 <p ng-repeat="detailCommande in commande.detailCommandes track by detailCommande.id|orderBy:detailCommande.prix:false" class="item item-icon-left" > 
@@ -29,20 +34,18 @@
                     {{detailCommande.plat.nom}}
                     <span class="montant">{{detailCommande.prix|montant}}</span>
                 </p>
-                <p class="item item-icon-left" > 
-                    <i class="icon ion-android-bicycle"></i>
-                    Frais Livraison
-                    <span class="montant">{{commande.fraisTransport|montant}}</span>
+                <p class="item item-icon-left">
+                    <i class="icon ion-ios-cart"></i>  Frais commande
+                    <span class="montant">{{commande.fraisCommande|montant}}</span>
                 </p>
 
                 <div class="row item">
                     <h2>TOTAL</h2>
-                    <strong class="montant">{{commande.total|montant}}</strong>
+                    <strong class="montant">{{commande.totalCommande|montant}}</strong>
                 </div>
 
             </div>
             
         </div>
-        <div id="map" style="position:absolute;top:0px;width: 1px;height: 1px;"></div>
     </ion-content>
 </ion-view>

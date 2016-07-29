@@ -4,9 +4,10 @@
 'use strict';
 
 app.controller('InfoCommandeController',
-    ['$scope','SpinnerService','$state','CommandeService',
-    function($scope,SpinnerService,$state,CommandeService
+    ['$scope','SpinnerService','$state','CommandeService','FRAIS_COMMANDE',
+    function($scope,SpinnerService,$state,CommandeService,FRAIS_COMMANDE
     ){
+        $scope.codeCommandeVisible = false;
 
         CommandeService.listByUserConnected();
 
@@ -15,6 +16,7 @@ app.controller('InfoCommandeController',
         $scope.indexSelected = 0;
 
         $scope.selectCommande = function($selected){
+            $scope.codeCommandeVisible = false;
             SpinnerService.start();
             //deselectionner le precedent, avant de recuperer le nouvel index
             $scope.commandes[$scope.indexSelected].selected = false;
@@ -29,6 +31,10 @@ app.controller('InfoCommandeController',
 
 
         };
+        
+        $scope.showCodeCommande = function(){
+            $scope.codeCommandeVisible = !$scope.codeCommandeVisible;
+        };
 
         //***************LISTENER*******************
 
@@ -36,11 +42,14 @@ app.controller('InfoCommandeController',
             $scope.commandes = args.commandes;
             angular.forEach($scope.commandes,function(commande){
                 commande.dureeRestant =Math.round(getDureeRestant(new Date(commande.dateCommande).getTime(),commande.durationEstimative*1000)/1000);
-                
-                commande.total = commande.fraisTransport;
-                angular.forEach(commande.detailCommandes,function(detail){
-                    commande.total += detail.prix;
-                });
+                if(!commande.totalCommande){
+                    commande.montantCommande = 0;
+                    angular.forEach(commande.detailCommandes,function(detail){
+                        commande.montantCommande += detail.prix;
+                    });
+                    commande.fraisCommande = commande.montantCommande * FRAIS_COMMANDE;
+                    commande.totalCommande = commande.montantCommande+commande.fraisCommande;
+                }
 
             });
             

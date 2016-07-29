@@ -89,30 +89,17 @@ app
                 templateUrl: 'js/view/infoCommande.html',
                 controller:'InfoCommandeController'
             })
-            .state('suiviLivraison', {
-                url: '/suivi-livraison',
+            .state('restaurants', {
+                url: '/restaurants',
                 cache: enabledCache,
-                templateUrl: 'js/view/suiviLivraison.html',
-                controller:'SuiviLivraisonController',
-                data: {
-                    permissions: {
-                        only: ['ROLE_LIVREUR'],
-                        redirectTo:'home'
-                    }
-                }
+                templateUrl: 'js/view/restaurant.html',
+                controller:'RestaurantController'
             })
-            .state('showMapLivraison', {
-                url: '/show-map-livraison',
+            .state('listPlatsByRestaurant', {
+                url: '/plat/restaurant/:idRestaurant',
                 cache: enabledCache,
-                templateUrl: 'js/view/mapLivraison.html',
-                controller:'MapLivraisonController',
-                data: {
-                    permissions: {
-                        only: ['ROLE_LIVREUR'],
-                        redirectTo:'home'
-                    }
-                }
+                templateUrl: 'js/view/home.html',
+                controller:'PlatByRestaurantController'
             })
-
         ;
     }]);

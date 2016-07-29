@@ -1,5 +1,7 @@
 <div class="bar bar-subheader">
+    <button ng-hide="isFirst" ng-click="previewPlat()" class="button icon ion-arrow-left-a"></button>
     <h3 class="title">{{plat.nom}}</h3>
+    <button ng-hide="isLast" ng-click="nextPlat()" class="button icon ion-arrow-right-a"></button>
 </div>
 <ion-view>
     <ion-content scroll="true" class="padding has-header">

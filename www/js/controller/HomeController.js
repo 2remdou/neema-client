@@ -3,39 +3,63 @@
  */
 
 app.controller('HomeController',
-    ['$scope','PlatService','SpinnerService','INTERVAL_TIME_FOR_TRY_AGAIN_LOADING',
-    function($scope,PlatService,SpinnerService,INTERVAL_TIME_FOR_TRY_AGAIN_LOADING){
+    ['$scope','PlatService','PlatDataService','SpinnerService','INTERVAL_TIME_FOR_TRY_AGAIN_LOADING',
+    'FirstLoad',
+    function($scope,PlatService,PlatDataService,SpinnerService,INTERVAL_TIME_FOR_TRY_AGAIN_LOADING,
+    FirstLoad){
 
-        var page = 0;
-        var allPlaIsLoaded = false;
-        var timeLastLoading = new Date();
+        var loading = false;
+        PlatDataService.data.type='onMenu';
+
         $scope.plats = [];
+
         $scope.loadMore = function(){
-            if(allPlaIsLoaded) {
-                if(new Date().getTime() - timeLastLoading >= INTERVAL_TIME_FOR_TRY_AGAIN_LOADING){
-                    allPlaIsLoaded=false;
-                }else{
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                    return;
-                }
-            }
+            if(PlatDataService.data.type==='other') return;
             SpinnerService.start();
-            PlatService.listOnMenu(++page).then(function(plats){
-                timeLastLoading = new Date().getTime();
-                if(plats.length === 0){
-                    --page;
-                    allPlaIsLoaded = true;
-                }
-                $scope.plats = $scope.plats.concat(plats);
-                $scope.$broadcast('scroll.infiniteScrollComplete');
+            if(loading) return;//encours de chargement
+            //si l'intervalle est expiré
+            //ou tous les plats ne sont pas chargés(pour la pagination)
+            if(PlatDataService.timeForLoadingExpired() || 
+                !PlatDataService.allPlatAreAlreadyLoaded.onMenu) {
+                loading=true;
+                PlatService.listOnMenu(++PlatDataService.currentPage.onMenu).then(function(response){
+                    loading=false;
+                    PlatDataService.lastTimeToLoad = new Date().getTime();
+                    if(response.plats.length === 0){
+                        PlatDataService.currentPage.onMenu=response.pageCount;
+                        PlatDataService.allPlatAreAlreadyLoaded.onMenu = true;
+                    }else{
+                        PlatDataService.setData(response.plats);
+                    }
+                    $scope.plats = PlatDataService.getData();            
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                    SpinnerService.stop();
+                });
+            }else{
+                $scope.plats = PlatDataService.getData();
                 SpinnerService.stop();
-            });
+            }
         };
+        if(FirstLoad.controller.HomeController){
+            $scope.loadMore();
+            FirstLoad.controller.HomeController=false;
+        }else{
+            $scope.plats = PlatDataService.getData();
+        }
+
 
 
         //***************LISTENER*******************
 
+        $scope.$on('search.finished',function(event,args){
+            PlatDataService.data.type='other';//pouvoir parcourir les resultats de la recherche
+            $scope.plats = args.plats;
+            PlatDataService.setData(args.plats);
+        });
+/*
         $scope.$on('$stateChangeSuccess', function() {
             $scope.loadMore();
         });
-}]);
+
+*/}
+]);

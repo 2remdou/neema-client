@@ -4,23 +4,20 @@
 'use strict';
 app
     .controller('CommandeController',
-        ['$scope','PlatService','PanierService','$state','GeoLocalisationService',
-            'SpinnerService','CommandeService','PopupService','DistanceMatrixService',
-            function($scope,PlatService,PanierService,$state,GeoLocalisationService,
-                    SpinnerService,CommandeService,PopupService,DistanceMatrixService){
+        ['$scope','PlatService','PanierService','$state',
+            'SpinnerService','CommandeService','PopupService','FRAIS_COMMANDE',
+            function($scope,PlatService,PanierService,$state,
+                    SpinnerService,CommandeService,PopupService,FRAIS_COMMANDE){
 
-                $scope.waitFinishLoading=2;
                 if(PanierService.isEmpty()){
                     $state.go('home');
                     return;
                 }
                 $scope.commande={};
+                $scope.commande.total=0;
                 $scope.plats = PanierService.getPanier();
                 $scope.commande.restaurant = $scope.plats[0].restaurant;//car tous les plats viennent du même restaurant
                 $scope.commande.telephone = $scope.userConnected.username;
-
-
-                SpinnerService.start();
 
                 var refreshCommande = function(){
                     $scope.commande.total = 0;
@@ -32,54 +29,11 @@ app
                             plat:plat.id
                         });
                         $scope.commande.total += parseInt(plat.prix);
-
+                        $scope.commande.fraisCommande = $scope.commande.total*FRAIS_COMMANDE;
+                        $scope.commande.totalCommande=$scope.commande.total+$scope.commande.fraisCommande;
                     });
-
-                    $scope.commande.total += parseInt($scope.commande.fraisTransport);
                 };
-
-                $scope.commande.fraisTransport = Math.floor(Math.random() * 15000 + 10000) ;
-
-
-                GeoLocalisationService.getPosition().then(function(position){
-                    $scope.waitFinishLoading --;
-                    $scope.commande.latitude = position.coords.latitude;
-                    $scope.commande.longitude = position.coords.longitude; 
-
-                    //determination la distance et le temps entre le restaurant et le client
-
-                    var origin = {lat:parseFloat($scope.commande.restaurant.latitude),lng:parseFloat($scope.commande.restaurant.longitude)};
-                    var destination = {lat:parseFloat($scope.commande.latitude),lng:parseFloat($scope.commande.longitude)};
-                    DistanceMatrixService.getDistanceMatrix(origin,destination).then(function(distanceMatrice){
-                        $scope.waitFinishLoading --;
-                        $scope.commande.durationLivraison=distanceMatrice.duration.value;
-                        $scope.commande.distance=distanceMatrice.distance.value;
-                    },function(message){
-                        SpinnerService.stop();
-                        var popup = {
-                            title:'Echec lors du calcul de la distance',
-                            message:message,
-                            cssClass:'popupDanger'
-                        };
-                        PopupService.show(popup).then(function(res){
-                            $state.go('home');
-                        });
-                    });
-
-                    refreshCommande();
-
-                },function(message){
-                    SpinnerService.stop();
-                    var popup = {
-                        title:'Géolocalisation',
-                        message:message,
-                        cssClass:'popupDanger'
-                    };
-                    PopupService.show(popup).then(function(res){
-                        $state.go('home');
-                    });
-
-                });
+                refreshCommande();
 
                 $scope.removeInPanier = function(plat){
                     if($scope.plats.length===1){
@@ -102,9 +56,16 @@ app
                 $scope.valider = function(commande){
                     var c = angular.copy(commande);
                     c.restaurant = c.restaurant.id;
-                    SpinnerService.start();
-                    CommandeService.post(c);
-
+                    var popup = {
+                        title: 'Confirmation',
+                        message: 'Voulez-vous passer cette commande ?'
+                    };
+                    PopupService.confirmation(popup).then(function(res) {
+                        if(res){
+                            SpinnerService.start();
+                            CommandeService.post(c);
+                        }
+                    });
                 };
 
                 $scope.clearPanier = function() {
@@ -119,11 +80,6 @@ app
                         }
                     });
                 };
-
-            $scope.$watch('waitFinishLoading', function(newValue, oldValue, scope) {
-                if($scope.waitFinishLoading<=0) SpinnerService.stop();
-            });
-
 
 
                 //***************LISTENER*******************
