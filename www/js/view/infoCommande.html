@@ -16,11 +16,9 @@
                 <p  class="item item-icon-left" >
                     <i class="icon ion-clock"></i>
                          Dans : 
-                            <timer countdown="commande.dureeRestant" max-time-unit="'minute'" interval="1000">  
-                                <neema-color-timer minute="mminutes" seconde="sseconds">
-                                   {{mminutes}} m {{sseconds}} s
-                                </neema-color-timer>
-                            </timer>
+                            <neema-timer time="commande.dureeRestant">
+
+                            </neema-timer>
                 </p>
                 <p  class="item item-icon-right" >
                     <i class="icon ion-key cursor-pointer" ng-click="showCodeCommande()"></i>

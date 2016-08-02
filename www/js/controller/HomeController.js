@@ -17,6 +17,9 @@ app.controller('HomeController',
             if(PlatDataService.data.type==='other') return;
             SpinnerService.start();
             if(loading) return;//encours de chargement
+
+            //toujours recharger, si la liste des plats est vide
+            if($scope.plats.length === 0) PlatDataService.allPlatAreAlreadyLoaded.onMenu = false;
             //si l'intervalle est expiré
             //ou tous les plats ne sont pas chargés(pour la pagination)
             if(PlatDataService.timeForLoadingExpired() || 

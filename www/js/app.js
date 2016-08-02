@@ -10,9 +10,8 @@ var app = angular.module('neema',
         'restangular',
         'ngCordova',
         'angular-jwt',
-        'timer',
         'permission',
-        'permission.ui',
+        'permission.ui'
     ]);
     
     app

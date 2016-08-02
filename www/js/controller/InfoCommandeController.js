@@ -41,7 +41,7 @@ app.controller('InfoCommandeController',
         $scope.$on('commande.list',function(event,args){
             $scope.commandes = args.commandes;
             angular.forEach($scope.commandes,function(commande){
-                commande.dureeRestant =Math.round(getDureeRestant(new Date(commande.dateCommande).getTime(),commande.durationEstimative*1000)/1000);
+                commande.dureeRestant = Math.round(getDureeRestant(commande.dateCommande,commande.durationEstimative*1000));
                 if(!commande.totalCommande){
                     commande.montantCommande = 0;
                     angular.forEach(commande.detailCommandes,function(detail){
