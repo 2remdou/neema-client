@@ -1,6 +1,8 @@
+'use strict'
 app
     .run(
-    ['$ionicPlatform','$state','$location',function($ionicPlatform,$state,$location) {
+    ['$ionicPlatform','$state','$location',
+    function($ionicPlatform,$state,$location) {
         $ionicPlatform.ready(function() {
             if(window.cordova && window.cordova.plugins.Keyboard) {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -15,7 +17,7 @@ app
             if(window.StatusBar) {
                 StatusBar.styleDefault();
             }
-            // $state.go('suivi');
+             // $state.go('suivi');
         });
 
 
@@ -113,7 +115,62 @@ app
                 PopupService.show(popup);
         });
     }])
+/*    .run(['$ionicPlatform','UserService','$rootScope',
+            function($ionicPlatform,UserService,$rootScope){   
+                ionic.Platform.ready(function(){
+                    var options = {
+                        android: { 
+                            senderID: "842997542833"
+                        },
+                        ios: {
+                            alert: "true",
+                            badge: "true",
+                            sound: "true"
+                        },
+                        windows: {}
+                    };
+                        var push = PushNotification.init(options);                    
 
-    ;
+                });
+    }]) 
+*/
+    .run(['$cordovaPushV5','$ionicPlatform','UserService','$rootScope',
+            function($cordovaPushV5,$ionicPlatform,UserService,$rootScope){   
+                ionic.Platform.ready(function(){
+                    var options = {
+                        android: { 
+                            senderID: "842997542833"
+                        },
+                        ios: {
+                            alert: "true",
+                            badge: "true",
+                            sound: "true"
+                        },
+                        windows: {}
+                    };
+                    $cordovaPushV5.initialize(options).then(function(){
+                        // start listening for new notifications
+                        $cordovaPushV5.onNotification();
+                        // start listening for errors
+                        $cordovaPushV5.onError();
+
+                        $cordovaPushV5.register().then(function(data) {
+                            data = {token:data,os:ionic.Platform.platform()};
+                            UserService.addDeviceToken(data,function(response){
+                                null;
+                            });
+                        });
+
+                        $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+                            console.log(data.message);
+                        });
+
+
+
+                    });
+
+                });
+    }]) 
+   ;
 
 

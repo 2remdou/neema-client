@@ -11,18 +11,26 @@
     <link href="css/style.css" rel="stylesheet">
 
     <!-- ionic/angularjs js -->
-    <!--<script src="lib/ionic/js/ionic.bundle.js"></script>-->
+    <!--<script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="lib/restangular/dist/restangular.min.js"></script>-->
 
+      <!-- cordova script (this will be a 404 during development) -->
+    <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
+ <script src="cordova.js"></script> 
 
     <!-- your app's js -->
     <script src="lib/lib.js"></script>
+
+    <!--<script src="js/util.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/routing.js"></script>-->
+    <!--<script src="js/run.js"></script>-->
 
 
       <!--service-->
       <script src="lib/service.js"></script>
 
-      <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
 
     <!--<script src="https://maps.google.com/maps/api/js?key=AIzaSyCXPmdF5YDDvEOwb6IYlow1Zr_rTknCIn8"></script>-->
     <!--<script src="http://maps.google.com/maps/api/js?key=AIzaSyCXPmdF5YDDvEOwb6IYlow1Zr_rTknCIn8"></script>-->
@@ -30,7 +38,8 @@
 
 
 
-  </head>
+  
+</head>
     <body ng-app="neema">
         <ion-side-menus enable-menu-with-back-views="true">
             <ion-side-menu-content>
@@ -54,7 +63,7 @@
                 <ion-header-bar class="bar-stable">
                     <h1 class="title" ng-hide="userConnected">Neema</h1>
 
-                    <h3 class="title" ng-show="userConnected" menu-close="" class="cursor-pointer">
+                    <h3 class="title" ng-show="userConnected" menu-close="">
                         <span ng-show="isLivreur">{{userConnected.username}} - </span>{{userConnected.nom}} 
                     </h3>
                 </ion-header-bar>
@@ -64,15 +73,15 @@
                             <i class="icon ion-person"></i>
                             Connexion 
                         </ion-item>
-                        <ion-item ng-show="userConnected && isClient" menu-close="" ui-sref="home" class="cursor-pointer">
+                        <ion-item ng-show="userConnected &amp;&amp; isClient" menu-close="" ui-sref="home" class="cursor-pointer">
                             <i class="icon ion-home"></i>
                             Accueil
                         </ion-item>
-                        <ion-item ng-show="userConnected && isClient" menu-close="" ui-sref="suivi" class="cursor-pointer">
+                        <ion-item ng-show="userConnected &amp;&amp; isClient" menu-close="" ui-sref="suivi" class="cursor-pointer">
                             <i class="icon ion-map"></i>
                             Suivi commandes
                         </ion-item>
-                        <ion-item ng-show="userConnected && isClient" menu-close="" ui-sref="restaurants" class="cursor-pointer">
+                        <ion-item ng-show="userConnected &amp;&amp; isClient" menu-close="" ui-sref="restaurants" class="cursor-pointer">
                             <i class="icon ion-android-restaurant"></i>
                             Restaurants
                         </ion-item>

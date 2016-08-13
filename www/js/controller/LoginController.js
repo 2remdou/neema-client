@@ -5,8 +5,8 @@
 'use strict';
 app
     .controller('LoginController',
-        ['$scope','UserService','SpinnerService','$rootScope','$state',
-        function($scope,UserService,SpinnerService,$rootScope,$state){
+        ['$scope','UserService','SpinnerService','$rootScope','$state','$cordovaPushV5',
+        function($scope,UserService,SpinnerService,$rootScope,$state,$cordovaPushV5){
 
             $scope.user = {};
 
@@ -29,9 +29,6 @@ app
                 SpinnerService.stop();
                 if($rootScope.isClient)
                     $state.go('home'); 
-                else if($rootScope.isLivreur)
-                    $state.go('suiviLivraison');
-
             });
 
 
