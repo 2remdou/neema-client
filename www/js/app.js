@@ -21,10 +21,10 @@ var app = angular.module('neema',
     ]);
     
     app
-         .constant('UrlApi','http://localhost:8000/api') 
+         //.constant('UrlApi','http://localhost:8000/api') 
          .constant('INTERVAL_TIME_FOR_TRY_AGAIN_LOADING',300000) //5 minutes
          .constant('FRAIS_COMMANDE',0.1) //10% du montant de la commande
-        //  .constant('UrlApi','https://neema.herokuapp.com/api')
+         .constant('UrlApi','https://neema.herokuapp.com/api')
     ;
 
 
